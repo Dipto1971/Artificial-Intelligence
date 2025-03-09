@@ -1,0 +1,56 @@
+import pygame
+import sys
+from environment import screen, clock, font, BACKGROUND_COLOR, TEXT_COLOR
+from agent import Agent
+
+AGENT1_COLOR = (0, 128, 255)  # Blue
+AGENT2_COLOR = (255, 0, 0)  # Red
+
+# Create two agents with different controls
+agent1 = Agent(AGENT1_COLOR, 100, 100, {
+    "left": pygame.K_LEFT, "right": pygame.K_RIGHT,
+    "up": pygame.K_UP, "down": pygame.K_DOWN
+})
+
+agent2 = Agent(AGENT2_COLOR, 200, 200, {
+    "left": pygame.K_a, "right": pygame.K_d,
+    "up": pygame.K_w, "down": pygame.K_s
+})
+
+# Group all sprites
+all_sprites = pygame.sprite.Group()
+all_sprites.add(agent1, agent2)
+
+# Main loop
+running = True
+while running:
+    # Limit frame rate to 60 FPS
+    clock.tick(60)
+
+    # Event handling
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+
+    # Get the keys pressed
+    keys = pygame.key.get_pressed()
+    
+    # Update both agents
+    all_sprites.update(keys)
+
+    # Fill the screen background
+    screen.fill(BACKGROUND_COLOR)
+
+    # Draw agents
+    all_sprites.draw(screen)
+
+    # Display the frame count as debug info
+    frame_text = font.render(f"Frame: {pygame.time.get_ticks() // 1000}", True, TEXT_COLOR)
+    screen.blit(frame_text, (10, 10))
+
+    # Flip the display
+    pygame.display.flip()
+
+# Quit Pygame properly
+pygame.quit()
+sys.exit()
