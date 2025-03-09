@@ -1,10 +1,7 @@
 import pygame
 import sys
+from agent import Agent, AGENT1_COLOR, AGENT2_COLOR
 from environment import screen, clock, font, BACKGROUND_COLOR, TEXT_COLOR
-from agent import Agent
-
-AGENT1_COLOR = (0, 128, 255)  # Blue
-AGENT2_COLOR = (255, 0, 0)  # Red
 
 # Create two agents with different controls
 agent1 = Agent(AGENT1_COLOR, 100, 100, {
@@ -18,8 +15,8 @@ agent2 = Agent(AGENT2_COLOR, 200, 200, {
 })
 
 # Group all sprites
-all_sprites = pygame.sprite.Group()
-all_sprites.add(agent1, agent2)
+all_sprites = pygame.sprite.Group(agent1, agent2)
+agents = [agent1, agent2]  # List for collision detection
 
 # Main loop
 running = True
@@ -35,8 +32,10 @@ while running:
     # Get the keys pressed
     keys = pygame.key.get_pressed()
     
-    # Update both agents
-    all_sprites.update(keys)
+    # Update both agents while checking for collisions
+    for agent in agents:
+        other_agents = [a for a in agents if a != agent]  # Exclude itself
+        agent.update(keys, other_agents)
 
     # Fill the screen background
     screen.fill(BACKGROUND_COLOR)
